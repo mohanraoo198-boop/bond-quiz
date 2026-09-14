@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bond Market Quiz — Unit I: Debt Securities</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div>
+    <header class="masthead">
+      <div>
+        <h1>Bond Market Quiz</h1>
+        <div class="sub">18-day progressive assessment &middot; Unit I: Introduction to Debt Securities and Markets</div>
+      </div>
+      <div class="who" id="masthead-right"></div>
+    </header>
+    <div class="tabs" id="tabs" style="display:none; padding:18px 28px 0">
+      <button class="tab active" data-tab="dashboard" id="tab-dashboard">Coupon schedule</button>
+      <button class="tab" data-tab="leaderboard" id="tab-leaderboard">Leaderboard</button>
+    </div>
+    <main id="app-root"></main>
+  </div>
+
+  <!-- Firebase compat SDK (loaded from Google's CDN at runtime) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="firebase-init.js"></script>
+  <script src="data/questions.js"></script>
+  <script>const QUIZ_DATA = window.QUIZ_DATA;</script>
+  <script src="student.js"></script>
+</body>
+</html>
