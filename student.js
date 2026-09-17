@@ -162,9 +162,6 @@ async function renderQuiz(dayNum) {
   const day = QUIZ_DATA.find(d => d.day === dayNum);
   if (!day) { location.hash = ''; return; }
 
-  // Re-check against the server (not just the dashboard's cached view) so a
-  // student can't retake a day by typing the URL/hash directly, refreshing,
-  // or re-clicking after the dashboard already rendered.
   root.innerHTML = '<div class="loading">Loading today&rsquo;s coupon&hellip;</div>';
   const studentRef = db.collection('classes').doc(SESSION.classId).collection('students').doc(SESSION.rollNo);
   const snap = await studentRef.get();
@@ -175,8 +172,43 @@ async function renderQuiz(dayNum) {
     return;
   }
 
-  QUIZ_STATE = { day, idx: 0, score: 0, answered: false };
+  const shuffledDay = {
+    ...day,
+    questions: day.questions.map((q, qi) => {
+      const seed = hashSeed(SESSION.rollNo + '|' + day.day + '|' + qi);
+      const order = seededShuffleIndices(q.o.length, seed);
+      const newOptions = order.map(i => q.o[i]);
+      const newCorrect = order.indexOf(q.c);
+      return { ...q, o: newOptions, c: newCorrect };
+    })
+  };
+
+  QUIZ_STATE = { day: shuffledDay, idx: 0, score: 0, answered: false };
   paintQuiz();
+}
+
+function hashSeed(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return h >>> 0;
+}
+function seededShuffleIndices(n, seed) {
+  let s = seed;
+  const rand = () => {
+    s |= 0; s = (s + 0x6D2B79F5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const idx = Array.from({ length: n }, (_, i) => i);
+  for (let i = idx.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [idx[i], idx[j]] = [idx[j], idx[i]];
+  }
+  return idx;
 }
 
 function paintQuiz() {
