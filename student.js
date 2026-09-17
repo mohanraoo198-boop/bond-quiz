@@ -128,7 +128,7 @@ async function renderDashboard() {
     const isOpen = day.day <= unlockedDay;
     const stateClass = isDone ? 'done' : (isOpen ? 'open' : 'locked');
     const stamp = isDone ? 'Redeemed' : (isOpen ? 'Open' : 'Locked');
-    return `<div class="day-card ${stateClass}" data-day="${day.day}" data-open="${isOpen ? '1' : '0'}">
+    return `<div class="day-card ${stateClass}" data-day="${day.day}" data-open="${isOpen ? '1' : '0'}" data-done="${isDone ? '1' : '0'}">
       <span class="stamp">${stamp}</span>
       <div class="num">${String(day.day).padStart(2, '0')}</div>
       <span class="topic">${escapeHtml(day.title)}</span>
@@ -149,16 +149,32 @@ async function renderDashboard() {
     <div class="schedule">${cards}</div>
   `;
   root.querySelectorAll('.day-card').forEach(c => {
-    c.onclick = () => { if (c.dataset.open === '1') location.hash = 'quiz/' + c.dataset.day; };
+    c.onclick = () => {
+      if (c.dataset.open === '1' && c.dataset.done !== '1') location.hash = 'quiz/' + c.dataset.day;
+    };
   });
 }
 
 // ---------- Quiz ----------
 let QUIZ_STATE = null;
 
-function renderQuiz(dayNum) {
+async function renderQuiz(dayNum) {
   const day = QUIZ_DATA.find(d => d.day === dayNum);
   if (!day) { location.hash = ''; return; }
+
+  // Re-check against the server (not just the dashboard's cached view) so a
+  // student can't retake a day by typing the URL/hash directly, refreshing,
+  // or re-clicking after the dashboard already rendered.
+  root.innerHTML = '<div class="loading">Loading today&rsquo;s coupon&hellip;</div>';
+  const studentRef = db.collection('classes').doc(SESSION.classId).collection('students').doc(SESSION.rollNo);
+  const snap = await studentRef.get();
+  const results = (snap.data() || {}).results || {};
+  if (results['day' + dayNum]) {
+    root.innerHTML = '<div class="loading">You&rsquo;ve already completed this day&rsquo;s quiz &mdash; redirecting&hellip;</div>';
+    setTimeout(() => { location.hash = ''; }, 900);
+    return;
+  }
+
   QUIZ_STATE = { day, idx: 0, score: 0, answered: false };
   paintQuiz();
 }
@@ -232,7 +248,6 @@ function selectOption(i) {
   nextBtn.style.display = 'block';
   nextBtn.textContent = idx === day.questions.length - 1 ? 'See results' : 'Next question';
   nextBtn.onclick = advanceQuiz;
-  // refresh punch row highlight
   const punches = document.querySelectorAll('.punch');
   punches[idx].classList.remove('current');
   punches[idx].classList.add(correct ? 'correct' : 'wrong');
@@ -258,6 +273,7 @@ async function submitDayResult() {
       const snap = await tx.get(studentRef);
       const data = snap.data() || {};
       const results = data.results || {};
+      if (results['day' + day.day]) return;
       results['day' + day.day] = { score, completedAt: Date.now() };
       const totalScore = Object.values(results).reduce((a, r) => a + (r.score || 0), 0);
       tx.set(studentRef, { results, totalScore }, { merge: true });
