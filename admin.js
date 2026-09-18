@@ -102,10 +102,11 @@ async function renderClassPanel(classId) {
 
   const rows = students.map(s => {
     const completed = s.results ? Object.keys(s.results).length : 0;
+    const totalQ = completed * 9;
     return `<tr>
       <td class="name">${escapeHtml(s.name)}<br><span class="roll">Roll ${escapeHtml(s.rollNo)}</span></td>
-      <td>${completed}/18</td>
-      <td class="score">${s.totalScore || 0}</td>
+      <td>${completed}/18 <span class="days-label">days</span></td>
+      <td class="score">${s.totalScore || 0}/${totalQ}</td>
       <td><button class="btn small secondary" data-remove="${s.rollNo}">Remove</button></td>
     </tr>`;
   }).join('');
@@ -130,7 +131,7 @@ async function renderClassPanel(classId) {
 
     <div class="board" style="margin-top:24px">
       <table>
-        <thead><tr><th>Student</th><th>Progress</th><th>Points</th><th></th></tr></thead>
+        <thead><tr><th>Student</th><th>Days Completed</th><th>Score</th><th></th></tr></thead>
         <tbody>${rows || '<tr><td colspan="4">No students yet — add some above.</td></tr>'}</tbody>
       </table>
     </div>
