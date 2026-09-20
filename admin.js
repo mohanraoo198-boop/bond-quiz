@@ -102,10 +102,10 @@ async function renderClassPanel(classId) {
 
   const rows = students.map(s => {
     const completed = s.results ? Object.keys(s.results).length : 0;
-    const totalQ = completed * 9;
+    const totalQ = s.results ? Object.values(s.results).reduce((a, r) => a + (r.total || 9), 0) : 0;
     return `<tr>
       <td class="name">${escapeHtml(s.name)}<br><span class="roll">Roll ${escapeHtml(s.rollNo)}</span></td>
-      <td>${completed}/18 <span class="days-label">days</span></td>
+      <td>${completed}/15 <span class="days-label">days</span></td>
       <td class="score">${s.totalScore || 0}/${totalQ}</td>
       <td><button class="btn small secondary" data-remove="${s.rollNo}">Remove</button></td>
     </tr>`;
@@ -118,7 +118,7 @@ async function renderClassPanel(classId) {
     </div>
     <div style="display:flex; gap:10px; margin-bottom:22px">
       <button class="btn secondary" id="lock-btn" ${cls.unlockedDay <= 1 ? 'disabled' : ''}>Lock back a day</button>
-      <button class="btn" id="unlock-btn" ${cls.unlockedDay >= 18 ? 'disabled' : ''}>Unlock next day</button>
+      <button class="btn" id="unlock-btn" ${cls.unlockedDay >= 15 ? 'disabled' : ''}>Unlock next day</button>
     </div>
 
     <div class="certificate" style="max-width:100%">
@@ -138,7 +138,7 @@ async function renderClassPanel(classId) {
   `;
 
   document.getElementById('unlock-btn').onclick = async () => {
-    await db.collection('classes').doc(classId).update({ unlockedDay: Math.min(18, cls.unlockedDay + 1) });
+    await db.collection('classes').doc(classId).update({ unlockedDay: Math.min(15, cls.unlockedDay + 1) });
     renderClassPanel(classId);
   };
   document.getElementById('lock-btn').onclick = async () => {
