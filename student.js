@@ -68,7 +68,7 @@ function renderLogin() {
     <div class="certificate">
       <div class="eyebrow"><span>UNIT I</span><span>DEBT SECURITIES</span></div>
       <h2>Bond Market Quiz</h2>
-      <div class="tagline">18-day progressive assessment &middot; sign in to begin today's coupon</div>
+      <div class="tagline">15-day progressive assessment &middot; sign in to begin today's coupon</div>
       <div class="field"><label>Class code</label><input id="in-class" placeholder="e.g. MBA25A" autocapitalize="characters"></div>
       <div class="field"><label>Roll number</label><input id="in-roll" placeholder="e.g. F2025013"></div>
       <div class="field"><label>Password</label><input id="in-pass" type="password" placeholder="Given by your faculty"></div>
@@ -131,6 +131,7 @@ async function renderDashboard() {
   const unlockedDay = CLASS_DOC.unlockedDay || 1;
   const completedCount = Object.keys(results).length;
   const totalScore = Object.values(results).reduce((a, r) => a + (r.score || 0), 0);
+  const totalPossible = Object.values(results).reduce((a, r) => a + (r.total || 9), 0);
 
   const cards = QUIZ_DATA.map(day => {
     const r = results['day' + day.day];
@@ -143,18 +144,18 @@ async function renderDashboard() {
       <span class="stamp">${stamp}</span>
       <div class="num">${String(day.day).padStart(2, '0')}</div>
       <span class="topic">${escapeHtml(day.title)}</span>
-      ${isDone ? `<span class="score">${r.score}/9</span>` : ''}
+      ${isDone ? `<span class="score">${r.score}/${r.total || 9}</span>` : ''}
     </div>`;
   }).join('');
 
   root.innerHTML = `
     <div class="dash-head">
       <h2>Coupon Schedule</h2>
-      <p>Day ${unlockedDay} of 18 is open. Complete each day's quiz, in order, to redeem its coupon.</p>
+      <p>Day ${unlockedDay} of 15 is open. Complete each day's quiz, in order, to redeem its coupon.</p>
       <div class="stat-row">
-        <div class="stat"><div class="n">${completedCount}/18</div><div class="l">Days completed</div></div>
+        <div class="stat"><div class="n">${completedCount}/15</div><div class="l">Days completed</div></div>
         <div class="stat"><div class="n">${totalScore}</div><div class="l">Total points</div></div>
-        <div class="stat"><div class="n">${completedCount ? Math.round((totalScore / (completedCount * 9)) * 100) : 0}%</div><div class="l">Accuracy</div></div>
+        <div class="stat"><div class="n">${totalPossible ? Math.round((totalScore / totalPossible) * 100) : 0}%</div><div class="l">Accuracy</div></div>
       </div>
     </div>
     <div class="schedule">${cards}</div>
@@ -337,7 +338,7 @@ async function submitDayResult() {
       const data = snap.data() || {};
       const results = data.results || {};
       if (results['day' + day.day]) return; // already recorded elsewhere — don't overwrite
-      results['day' + day.day] = { score, completedAt: Date.now() };
+      results['day' + day.day] = { score, total: day.questions.length, completedAt: Date.now() };
       const totalScore = Object.values(results).reduce((a, r) => a + (r.score || 0), 0);
       tx.set(studentRef, { results, totalScore }, { merge: true });
     });
@@ -383,7 +384,7 @@ async function renderLeaderboard() {
     const me = r.rollNo === SESSION.rollNo ? ' me' : '';
     return `<tr class="${me}">
       <td class="rank ${rankClass}">${i + 1}</td>
-      <td class="name">${escapeHtml(r.name)}<br><span class="roll">Roll ${escapeHtml(r.rollNo)} &middot; ${r.completed}/18 days</span></td>
+      <td class="name">${escapeHtml(r.name)}<br><span class="roll">Roll ${escapeHtml(r.rollNo)} &middot; ${r.completed}/15 days</span></td>
       <td class="score">${r.total}</td>
     </tr>`;
   }).join('');
