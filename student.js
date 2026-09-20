@@ -110,6 +110,16 @@ async function doLogin() {
 }
 
 // ---------- Dashboard ----------
+// ---------- Chronological unlock logic ----------
+// A day is available once it's within the class's manually-unlocked ceiling
+// AND the student has completed every prior day — so nobody can skip ahead,
+// but the admin still controls how far the class can go via "Unlock next day".
+function isDayOpenForStudent(dayNum, results, classCeiling) {
+  if (dayNum > classCeiling) return false;
+  if (dayNum === 1) return true;
+  return !!results['day' + (dayNum - 1)];
+}
+
 async function renderDashboard() {
   root.innerHTML = '<div class="loading">Loading your coupon schedule&hellip;</div>';
   const classRef = db.collection('classes').doc(SESSION.classId);
@@ -125,9 +135,10 @@ async function renderDashboard() {
   const cards = QUIZ_DATA.map(day => {
     const r = results['day' + day.day];
     const isDone = !!r;
-    const isOpen = day.day <= unlockedDay;
+    const isOpen = !isDone && isDayOpenForStudent(day.day, results, unlockedDay);
+    const isPending = !isDone && !isOpen && day.day <= unlockedDay; // ceiling allows it, but a prior day is still incomplete
     const stateClass = isDone ? 'done' : (isOpen ? 'open' : 'locked');
-    const stamp = isDone ? 'Redeemed' : (isOpen ? 'Open' : 'Locked');
+    const stamp = isDone ? 'Redeemed' : (isOpen ? 'Open' : (isPending ? 'Complete previous day' : 'Locked'));
     return `<div class="day-card ${stateClass}" data-day="${day.day}" data-open="${isOpen ? '1' : '0'}" data-done="${isDone ? '1' : '0'}">
       <span class="stamp">${stamp}</span>
       <div class="num">${String(day.day).padStart(2, '0')}</div>
@@ -139,7 +150,7 @@ async function renderDashboard() {
   root.innerHTML = `
     <div class="dash-head">
       <h2>Coupon Schedule</h2>
-      <p>Day ${unlockedDay} of 18 is open. Complete each day's quiz to redeem its coupon.</p>
+      <p>Day ${unlockedDay} of 18 is open. Complete each day's quiz, in order, to redeem its coupon.</p>
       <div class="stat-row">
         <div class="stat"><div class="n">${completedCount}/18</div><div class="l">Days completed</div></div>
         <div class="stat"><div class="n">${totalScore}</div><div class="l">Total points</div></div>
@@ -162,16 +173,32 @@ async function renderQuiz(dayNum) {
   const day = QUIZ_DATA.find(d => d.day === dayNum);
   if (!day) { location.hash = ''; return; }
 
+  // Re-check against the server (not just the dashboard's cached view) so a
+  // student can't retake a day, or skip ahead out of order, by typing the
+  // URL/hash directly, refreshing, or re-clicking after the dashboard
+  // already rendered.
   root.innerHTML = '<div class="loading">Loading today&rsquo;s coupon&hellip;</div>';
-  const studentRef = db.collection('classes').doc(SESSION.classId).collection('students').doc(SESSION.rollNo);
-  const snap = await studentRef.get();
+  const classRef = db.collection('classes').doc(SESSION.classId);
+  const studentRef = classRef.collection('students').doc(SESSION.rollNo);
+  const [classSnap, snap] = await Promise.all([classRef.get(), studentRef.get()]);
   const results = (snap.data() || {}).results || {};
+  const unlockedDay = (classSnap.data() || {}).unlockedDay || 1;
+
   if (results['day' + dayNum]) {
     root.innerHTML = '<div class="loading">You&rsquo;ve already completed this day&rsquo;s quiz &mdash; redirecting&hellip;</div>';
     setTimeout(() => { location.hash = ''; }, 900);
     return;
   }
+  if (!isDayOpenForStudent(dayNum, results, unlockedDay)) {
+    root.innerHTML = '<div class="loading">Complete the previous day first &mdash; redirecting&hellip;</div>';
+    setTimeout(() => { location.hash = ''; }, 900);
+    return;
+  }
 
+  // Shuffle each question's options deterministically per student+day+question,
+  // so the correct answer isn't reliably in the same position (or the
+  // longest option) for every student — this is what the seeded shuffle below
+  // fixes, without needing to touch the question bank itself.
   const shuffledDay = {
     ...day,
     questions: day.questions.map((q, qi) => {
@@ -187,6 +214,9 @@ async function renderQuiz(dayNum) {
   paintQuiz();
 }
 
+// Small deterministic PRNG (mulberry32) seeded from a string, so the same
+// student always sees the same shuffle for the same question if they
+// reload mid-quiz, but different students/days get different orders.
 function hashSeed(str) {
   let h = 1779033703 ^ str.length;
   for (let i = 0; i < str.length; i++) {
@@ -280,6 +310,7 @@ function selectOption(i) {
   nextBtn.style.display = 'block';
   nextBtn.textContent = idx === day.questions.length - 1 ? 'See results' : 'Next question';
   nextBtn.onclick = advanceQuiz;
+  // refresh punch row highlight
   const punches = document.querySelectorAll('.punch');
   punches[idx].classList.remove('current');
   punches[idx].classList.add(correct ? 'correct' : 'wrong');
@@ -305,7 +336,7 @@ async function submitDayResult() {
       const snap = await tx.get(studentRef);
       const data = snap.data() || {};
       const results = data.results || {};
-      if (results['day' + day.day]) return;
+      if (results['day' + day.day]) return; // already recorded elsewhere — don't overwrite
       results['day' + day.day] = { score, completedAt: Date.now() };
       const totalScore = Object.values(results).reduce((a, r) => a + (r.score || 0), 0);
       tx.set(studentRef, { results, totalScore }, { merge: true });
