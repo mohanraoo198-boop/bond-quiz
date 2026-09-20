@@ -1,9 +1,5 @@
-// Bond Market Concepts — 18-Day MCQ Question Bank
-// Converted from the faculty content bank. Each day: 2 articles + 9 MCQs (Tier 1-3).
-// Distractor pass: two options per question are deliberately close near-misses
-// (differing by one key term/number), and all four options are length-balanced
-// so neither position nor length gives away the answer. Runtime shuffle in
-// student.js still randomizes position per student.
+// Bond Market Concepts — 15-Day MCQ Question Bank (Days 13-18 merged into 13-15)
+// Each of days 1-12: 2 articles + 9 MCQs. Days 13-15: 4 articles + 18 MCQs (merged pairs).
 window.QUIZ_DATA = [
 {
   day: 1, title: "Fixed-income markets: characteristics & institutions",
@@ -106,7 +102,7 @@ window.QUIZ_DATA = [
     {t:1,text:"How many days after the last coupon was the trade in Article 2 settled?",o:["30 days","45 days","60 days","90 days"],c:1,e:"45 days."},
     {t:1,text:"What is added to the clean price to get the full price?",o:["Accrued interest","A fixed transaction tax","The bond's face value","An underwriting fee"],c:0,e:"Accrued interest since the last coupon date."},
     {t:2,text:"Why is accrued interest owed to the seller, not the buyer, at settlement?",o:["The seller held the bond and earned that interest during the holding period","The buyer owns all future coupons the moment the trade is agreed","It is a fixed regulatory rule unrelated to who held the bond","Accrued interest belongs to the exchange, not either party"],c:0,e:"The seller earned the interest for the days they held the bond."},
-    {t:2,text:"Why are bond prices usually quoted \"clean\" rather than \"dirty\"?",o:["To avoid the price mechanically drifting up each day purely from accrual", "Because quoting the dirty price is not permitted by regulation","Because the clean price is always higher than the dirty price","There is no particular reason — it is purely arbitrary convention"],c:0,e:"Quoting clean keeps price movements meaningful rather than mechanically drifting up each day."},
+    {t:2,text:"Why are bond prices usually quoted \"clean\" rather than \"dirty\"?",o:["To avoid the price mechanically drifting up each day purely from accrual","Because quoting the dirty price is not permitted by regulation","Because the clean price is always higher than the dirty price","There is no particular reason — it is purely arbitrary convention"],c:0,e:"Quoting clean keeps price movements meaningful rather than mechanically drifting up each day."},
     {t:2,text:"What happens to accrued interest immediately after a coupon payment date?",o:["It resets to zero and starts accruing again","It carries forward at its peak value into the next period","It is halved and carried into the next period","It becomes negative until the next coupon date"],c:0,e:"It resets to zero right after the coupon is paid."},
     {t:3,text:"₹1,000 face value, 8% annual coupon, 90 days since last coupon (360-day convention). Accrued interest?",o:["₹10 (mistakenly using 45 days)","₹20","₹40 (mistakenly using 180 days)","₹26.67 (mistakenly using a 300-day convention)"],c:1,e:"(1000×8%)×(90/360) = ₹20."},
     {t:3,text:"If the clean price is ₹980, calculate the full (dirty) price using the accrued interest above.",o:["₹960 (subtracting instead of adding)","₹980 (forgetting to add accrued interest)","₹1,000","₹1,020 (using double the accrued interest)"],c:2,e:"980 + 20 = ₹1,000."},
@@ -222,10 +218,12 @@ window.QUIZ_DATA = [
   ]
 },
 {
-  day: 13, title: "Classification of bonds",
+  day: 13, title: "Classification of bonds; Credit risk & distribution of government securities",
   articles: [
     {head:"Investors Compare Government, Municipal, and Corporate Bonds for Portfolio Mix", dateline:"MUMBAI", body:"A wealth advisory report compared government bonds (sovereign-backed), municipal bonds (issued by local bodies), and corporate bonds (issued by companies) for tax treatment, risk, and yield differences."},
-    {head:"Convertible Bond Issuance Rises as Companies Seek Cheaper Debt", dateline:"BENGALURU", body:"Companies increasingly issued convertible bonds — which can be converted into equity shares — to lower their borrowing costs by offering investors potential equity upside."}
+    {head:"Convertible Bond Issuance Rises as Companies Seek Cheaper Debt", dateline:"BENGALURU", body:"Companies increasingly issued convertible bonds — which can be converted into equity shares — to lower their borrowing costs by offering investors potential equity upside."},
+    {head:"Corporate Bond Downgrade Triggers Yield Spike", dateline:"MUMBAI", body:"A corporate bond was downgraded by two notches after weaker-than-expected earnings, causing its yield to spike by 120 basis points as investors demanded higher compensation for increased default risk."},
+    {head:"RBI Conducts Government Securities Auction via Primary Dealers", dateline:"DELHI", body:"The RBI conducted its weekly government securities (G-Sec) auction, distributing new issuances through primary dealers who then sell to institutional and retail investors in the secondary market."}
   ],
   questions: [
     {t:1,text:"What three bond categories are compared in Article 1?",o:["Government, municipal, corporate bonds","Government, retail, wholesale bonds","Domestic, foreign, offshore bonds","Senior, junior, mezzanine bonds"],c:0,e:"Government, municipal, and corporate bonds."},
@@ -236,16 +234,7 @@ window.QUIZ_DATA = [
     {t:2,text:"What trade-off does an investor accept by choosing a convertible bond over a plain bond?",o:["Giving up higher fixed income for potential equity-like upside if the stock rises","Giving up all principal protection for a guaranteed higher coupon","Giving up the right to receive any income at all","Accepting a longer tenure with no corresponding benefit"],c:0,e:"Lower coupon income in exchange for upside potential."},
     {t:3,text:"Convertible bond, ₹1,000 face value, convertible into 20 shares. Calculate the conversion price per share.",o:["₹20 (dividing shares by 1, not face value by shares)","₹50","₹100 (mistakenly using 10 shares)","₹500 (mistakenly using 2 shares)"],c:1,e:"1000/20 = ₹50 per share."},
     {t:3,text:"If the stock trades at ₹60, is conversion (at the ₹50 conversion price) advantageous now?",o:["Yes — 20 shares × ₹60 = ₹1,200, above the ₹1,000 face value","No — ₹60 is below the ₹1,000 face value per bond","No — conversion is never advantageous before maturity","Cannot be determined without the bond's coupon rate"],c:0,e:"20 × ₹60 = ₹1,200 > ₹1,000 face value, so conversion is advantageous."},
-    {t:3,text:"Convertible at 6.5% vs. plain bond at 9% coupon (same issuer/tenure). When would the convertible deliver the better total return?",o:["When the stock price rises significantly, making conversion outweigh the lower coupon","When the stock price falls significantly, making the lower coupon irrelevant","When interest rates fall to exactly zero across the market","Convertible bonds can never outperform plain bonds under any scenario"],c:0,e:"A significant stock rise makes the equity upside outweigh the lower coupon."}
-  ]
-},
-{
-  day: 14, title: "Credit risk & distribution of government securities",
-  articles: [
-    {head:"Corporate Bond Downgrade Triggers Yield Spike", dateline:"MUMBAI", body:"A corporate bond was downgraded by two notches after weaker-than-expected earnings, causing its yield to spike by 120 basis points as investors demanded higher compensation for increased default risk."},
-    {head:"RBI Conducts Government Securities Auction via Primary Dealers", dateline:"DELHI", body:"The RBI conducted its weekly government securities (G-Sec) auction, distributing new issuances through primary dealers who then sell to institutional and retail investors in the secondary market."}
-  ],
-  questions: [
+    {t:3,text:"Convertible at 6.5% vs. plain bond at 9% coupon (same issuer/tenure). When would the convertible deliver the better total return?",o:["When the stock price rises significantly, making conversion outweigh the lower coupon","When the stock price falls significantly, making the lower coupon irrelevant","When interest rates fall to exactly zero across the market","Convertible bonds can never outperform plain bonds under any scenario"],c:0,e:"A significant stock rise makes the equity upside outweigh the lower coupon."},
     {t:1,text:"By how much did the downgraded bond's yield spike?",o:["50 bps","80 bps","120 bps","200 bps"],c:2,e:"120 basis points."},
     {t:1,text:"Who are the intermediaries through which G-Secs are distributed?",o:["Primary dealers","Retail brokers only","Foreign central banks","Credit rating agencies"],c:0,e:"Primary dealers."},
     {t:1,text:"What triggered the credit downgrade in Article 1?",o:["A change in RBI rate policy","Weaker-than-expected earnings leading to a two-notch downgrade","A broader stock market crash","A currency devaluation affecting the issuer"],c:1,e:"Weaker-than-expected earnings."},
@@ -258,10 +247,12 @@ window.QUIZ_DATA = [
   ]
 },
 {
-  day: 15, title: "Stripped treasury securities & CDOs",
+  day: 14, title: "Stripped treasury securities & CDOs; Corporate bonds, structured notes, commercial paper, negotiable CDs, banker's acceptances",
   articles: [
     {head:"Dealers Strip Government Bonds Into Separate Principal and Interest Components", dateline:"MUMBAI", body:"Bond dealers are increasingly \"stripping\" long-term government bonds into individual zero-coupon components — separating each coupon payment and the final principal — and selling them separately to investors with specific cash-flow needs."},
-    {head:"Regulator Reviews Risk Disclosure Norms for Collateralized Debt Obligations", dateline:"DELHI", body:"Following renewed investor interest in structured credit products, the regulator proposed stricter disclosure norms for collateralized debt obligations (CDOs), which pool various debt instruments and repackage them into tranches with different risk levels."}
+    {head:"Regulator Reviews Risk Disclosure Norms for Collateralized Debt Obligations", dateline:"DELHI", body:"Following renewed investor interest in structured credit products, the regulator proposed stricter disclosure norms for collateralized debt obligations (CDOs), which pool various debt instruments and repackage them into tranches with different risk levels."},
+    {head:"Bank Issues Negotiable Certificates of Deposit to Manage Short-Term Funding", dateline:"MUMBAI", body:"A private bank issued negotiable certificates of deposit (CDs) with a 6-month tenure, allowing large depositors to earn a fixed return while retaining the option to sell the CD in the secondary market before maturity."},
+    {head:"Exporter Uses Banker's Acceptance to Finance Trade Shipment", dateline:"CHENNAI", body:"An exporting company used a banker's acceptance — a bank-guaranteed short-term instrument — to finance an overseas shipment, giving the foreign buyer's bank confidence in the payment guarantee."}
   ],
   questions: [
     {t:1,text:"What does \"stripping\" a government bond involve?",o:["Separating each coupon payment and the principal into individual zero-coupon instruments","Merging several coupon payments into a single equity-like instrument","Converting the entire bond into a floating-rate structure","Reducing the bond's stated face value to reflect current market price"],c:0,e:"Splitting coupons and principal into separate zero-coupon instruments."},
@@ -272,16 +263,7 @@ window.QUIZ_DATA = [
     {t:2,text:"What concerned regulators enough to review CDO disclosure norms?",o:["CDOs' complexity and opacity around the underlying pool's true risk","CDOs paying investors too little relative to plain corporate bonds","CDOs being considered too simple for investors to misunderstand","CDOs being structurally incapable of losing value"],c:0,e:"Complexity and opacity around underlying risk were the core concerns."},
     {t:3,text:"A 10-year bond with annual coupons is fully stripped into coupon strips plus 1 principal strip. Total zero-coupon instruments?",o:["9 (forgetting to count the principal strip)","10 (forgetting to add the principal strip)","11","20 (mistakenly doubling each coupon into two strips)"],c:2,e:"10 coupon strips + 1 principal strip = 11 total."},
     {t:3,text:"Senior tranche yields 6%, junior (equity) tranche yields 14%, same underlying pool. What explains the gap?",o:["It compensates junior tranche holders for absorbing losses first","It compensates senior tranche holders for absorbing losses first","The gap reflects a difference in the currency of issuance","The gap has no basis in risk and is set arbitrarily"],c:0,e:"Loss-absorption order drives the yield gap."},
-    {t:3,text:"If defaults rise sharply in the pool, which tranche absorbs losses first, and why does this structure exist?",o:["Senior tranche absorbs losses first, to protect junior holders","Junior/equity tranche absorbs losses first, to protect senior holders","Both tranches absorb losses equally and simultaneously","Neither tranche absorbs losses — the originator does instead"],c:1,e:"The junior tranche is designed to absorb losses first, protecting the senior tranche."}
-  ]
-},
-{
-  day: 16, title: "Corporate bonds, structured notes, commercial paper, negotiable CDs, banker's acceptances",
-  articles: [
-    {head:"Bank Issues Negotiable Certificates of Deposit to Manage Short-Term Funding", dateline:"MUMBAI", body:"A private bank issued negotiable certificates of deposit (CDs) with a 6-month tenure, allowing large depositors to earn a fixed return while retaining the option to sell the CD in the secondary market before maturity."},
-    {head:"Exporter Uses Banker's Acceptance to Finance Trade Shipment", dateline:"CHENNAI", body:"An exporting company used a banker's acceptance — a bank-guaranteed short-term instrument — to finance an overseas shipment, giving the foreign buyer's bank confidence in the payment guarantee."}
-  ],
-  questions: [
+    {t:3,text:"If defaults rise sharply in the pool, which tranche absorbs losses first, and why does this structure exist?",o:["Senior tranche absorbs losses first, to protect junior holders","Junior/equity tranche absorbs losses first, to protect senior holders","Both tranches absorb losses equally and simultaneously","Neither tranche absorbs losses — the originator does instead"],c:1,e:"The junior tranche is designed to absorb losses first, protecting the senior tranche."},
     {t:1,text:"What is the tenure of the negotiable CD in Article 1?",o:["3 months","6 months","1 year","2 years"],c:1,e:"6 months."},
     {t:1,text:"What instrument did the exporter use to finance the shipment?",o:["A negotiable CD","A banker's acceptance","Commercial paper","A Treasury Bill"],c:1,e:"A banker's acceptance."},
     {t:1,text:"What flexibility does a \"negotiable\" CD offer that a regular fixed deposit does not?",o:["It can be traded in the secondary market before maturity","It requires no minimum deposit amount from the depositor","It offers an unlimited, open-ended tenure by design","It pays a return only if held to full maturity"],c:0,e:"Tradability in the secondary market before maturity."},
@@ -294,10 +276,12 @@ window.QUIZ_DATA = [
   ]
 },
 {
-  day: 17, title: "Asset-backed securities & credit enhancements",
+  day: 15, title: "Asset-backed securities & credit enhancements; Primary vs. secondary markets; public issue vs. private placement (integrative review)",
   articles: [
     {head:"Auto Loan Portfolio Securitized Into Asset-Backed Securities", dateline:"MUMBAI", body:"An NBFC pooled thousands of auto loans and securitized them into asset-backed securities (ABS), selling investor claims on the pooled loan repayments rather than holding the loans on its own books."},
-    {head:"ABS Issue Adds Credit Enhancement via Overcollateralization", dateline:"DELHI", body:"To improve the credit rating of a new ABS issue, the originator added credit enhancement in the form of overcollateralization — pledging a loan pool worth more than the securities issued, providing a buffer against defaults."}
+    {head:"ABS Issue Adds Credit Enhancement via Overcollateralization", dateline:"DELHI", body:"To improve the credit rating of a new ABS issue, the originator added credit enhancement in the form of overcollateralization — pledging a loan pool worth more than the securities issued, providing a buffer against defaults."},
+    {head:"Company Opts for Private Placement Over Public Bond Issue to Save Time and Cost", dateline:"MUMBAI", body:"A mid-sized company chose to raise ₹150 crore via private placement to a small group of institutional investors rather than a public bond issue, citing faster execution and lower disclosure costs, despite reaching fewer investors."},
+    {head:"Secondary Market Liquidity for Corporate Bonds Improves After New Listing Rules", dateline:"DELHI", body:"New exchange rules requiring mandatory listing of privately placed bonds have improved secondary market liquidity, making it easier for institutional holders to trade previously illiquid private placements."}
   ],
   questions: [
     {t:1,text:"What underlying assets were securitized in Article 1?",o:["A pool of auto loans","A pool of government bonds","A single large corporate loan","A portfolio of commercial real estate leases"],c:0,e:"A pool of auto loans."},
@@ -308,16 +292,7 @@ window.QUIZ_DATA = [
     {t:2,text:"Name one other form of credit enhancement besides overcollateralization.",o:["A third-party guarantee/insurance wrap or a subordination structure","Simply raising the coupon rate paid to all investors","Reducing the underlying loan pool size to zero","Removing the loan servicer from the transaction entirely"],c:0,e:"Guarantees/insurance wraps or subordination are common alternatives."},
     {t:3,text:"An ABS issue is backed by a ₹120 crore loan pool, with ₹100 crore of securities issued. Calculate the overcollateralization percentage.",o:["10% (mistakenly using ₹110 crore as the pool value)","20%","25% (mistakenly dividing by the pool value instead of securities issued)","120% (mistaking the pool value itself for the percentage)"],c:1,e:"(120−100)/100 = 20%."},
     {t:3,text:"If defaults in the loan pool reach ₹15 crore, are investors in the ₹100 crore ABS issue still fully covered?",o:["Yes — remaining pool is ₹105 crore, still above the ₹100 crore issued","No — remaining pool is ₹85 crore, below the ₹100 crore issued","No — remaining pool is exactly ₹100 crore, offering no buffer","Yes — remaining pool is ₹135 crore, well above what's issued"],c:0,e:"120 − 15 = ₹105 crore, still above the ₹100 crore issued."},
-    {t:3,text:"Explain the originator's motivation for securitizing loans off its balance sheet.",o:["It frees regulatory capital and converts future loan repayments into immediate cash","It increases the originator's regulatory capital requirements","It has no effect on the originator's liquidity position","It is done purely to avoid paying taxes on loan interest income"],c:0,e:"It frees regulatory capital and converts future repayments into immediate liquidity."}
-  ]
-},
-{
-  day: 18, title: "Primary vs. secondary markets; public issue vs. private placement (integrative review)",
-  articles: [
-    {head:"Company Opts for Private Placement Over Public Bond Issue to Save Time and Cost", dateline:"MUMBAI", body:"A mid-sized company chose to raise ₹150 crore via private placement to a small group of institutional investors rather than a public bond issue, citing faster execution and lower disclosure costs, despite reaching fewer investors."},
-    {head:"Secondary Market Liquidity for Corporate Bonds Improves After New Listing Rules", dateline:"DELHI", body:"New exchange rules requiring mandatory listing of privately placed bonds have improved secondary market liquidity, making it easier for institutional holders to trade previously illiquid private placements."}
-  ],
-  questions: [
+    {t:3,text:"Explain the originator's motivation for securitizing loans off its balance sheet.",o:["It frees regulatory capital and converts future loan repayments into immediate cash","It increases the originator's regulatory capital requirements","It has no effect on the originator's liquidity position","It is done purely to avoid paying taxes on loan interest income"],c:0,e:"It frees regulatory capital and converts future repayments into immediate liquidity."},
     {t:1,text:"How much did the company raise via private placement?",o:["₹100 crore","₹150 crore","₹200 crore","₹250 crore"],c:1,e:"₹150 crore."},
     {t:1,text:"What reasons did the company give for choosing private placement over a public issue?",o:["Faster execution and lower disclosure costs","Higher investor reach and a lower coupon","A mandatory regulatory requirement to do so","To avoid paying any coupon to investors at all"],c:0,e:"Faster execution and lower disclosure costs."},
     {t:1,text:"What new rule improved secondary market liquidity in Article 2?",o:["Mandatory listing of privately placed bonds","An outright ban on private placements","Lower minimum investment amounts for retail investors","Removal of all disclosure requirements for issuers"],c:0,e:"Mandatory listing of privately placed bonds."},
