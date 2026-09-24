@@ -116,9 +116,10 @@ async function renderClassPanel(classId) {
       <div class="stat"><div class="n">${cls.unlockedDay}</div><div class="l">Day unlocked</div></div>
       <div class="stat"><div class="n">${students.length}</div><div class="l">Students enrolled</div></div>
     </div>
-    <div style="display:flex; gap:10px; margin-bottom:22px">
+    <div style="display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap">
       <button class="btn secondary" id="lock-btn" ${cls.unlockedDay <= 1 ? 'disabled' : ''}>Lock back a day</button>
       <button class="btn" id="unlock-btn" ${cls.unlockedDay >= 15 ? 'disabled' : ''}>Unlock next day</button>
+      <button class="btn secondary" id="download-btn">Download scoreboard (CSV)</button>
     </div>
 
     <div class="certificate" style="max-width:100%">
@@ -145,6 +146,7 @@ async function renderClassPanel(classId) {
     await db.collection('classes').doc(classId).update({ unlockedDay: Math.max(1, cls.unlockedDay - 1) });
     renderClassPanel(classId);
   };
+  document.getElementById('download-btn').onclick = () => downloadScoreboardCsv(classId, cls, students);
   document.getElementById('add-students-btn').onclick = async () => {
     const lines = document.getElementById('roster-input').value.split('\n').map(l => l.trim()).filter(Boolean);
     const errEl = document.getElementById('roster-err');
@@ -170,6 +172,39 @@ async function renderClassPanel(classId) {
       renderClassPanel(classId);
     };
   });
+}
+
+function downloadScoreboardCsv(classId, cls, students) {
+  const dayCols = Array.from({ length: 15 }, (_, i) => i + 1);
+  const header = ['Roll No', 'Name', ...dayCols.map(d => 'Day ' + d), 'Days Completed', 'Total Score', 'Total Possible', '% Completed', '% Marks'];
+  const csvEscape = (v) => {
+    const s = String(v ?? '');
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const rows = students.map(s => {
+    const results = s.results || {};
+    const dayCells = dayCols.map(d => {
+      const r = results['day' + d];
+      return r ? `${r.score}/${r.total || 9}` : '';
+    });
+    const completed = Object.keys(results).length;
+    const totalPossible = Object.values(results).reduce((a, r) => a + (r.total || 9), 0);
+    const pctCompleted = Math.round((completed / 15) * 100);
+    const pctMarks = totalPossible ? Math.round(((s.totalScore || 0) / totalPossible) * 100) : 0;
+    return [s.rollNo, s.name || '', ...dayCells, completed, s.totalScore || 0, totalPossible, pctCompleted + '%', pctMarks + '%'];
+  });
+  const lines = [header, ...rows].map(row => row.map(csvEscape).join(','));
+  const csv = lines.join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `bond-quiz-scoreboard-${classId}-${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 boot();
